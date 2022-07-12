@@ -1,21 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "MovingPlatform.h"
 
 // Sets default values
 AMovingPlatform::AMovingPlatform()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
 void AMovingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	StartLocation = GetActorLocation();
 }
 
@@ -37,24 +35,26 @@ void AMovingPlatform::MovePlatform(float DeltaTime)
 		StartLocation = StartLocation + MoveDirection * MovedDistance;
 		SetActorLocation(StartLocation);
 		PlatformVelocity = -PlatformVelocity;
-	} else
+	}
+	else
 	{
 		FVector CurrentLocation = GetActorLocation();
-		CurrentLocation = CurrentLocation + (PlatformVelocity * DeltaTime);	
+		CurrentLocation = CurrentLocation + (PlatformVelocity * DeltaTime);
 		SetActorLocation(CurrentLocation);
-	
-	
 	}
 }
 
 void AMovingPlatform::RotatePlatform(float DeltaTime)
-{
-	UE_LOG(LogTemp, Display, TEXT("%s Rotating..."), *GetName());
+{ 
+	AddActorLocalRotation(RotationVelocity * DeltaTime);
 }
 
-bool AMovingPlatform::ShouldPlatformReturn()
+bool AMovingPlatform::ShouldPlatformReturn() const
 {
-	float DistanceMoved = FVector::Dist(StartLocation, GetActorLocation());
-	return DistanceMoved > MovedDistance;
+	return GetDistanceMoved() > MovedDistance;
 }
 
+float AMovingPlatform::GetDistanceMoved() const
+{
+	return FVector::Dist(StartLocation, GetActorLocation());
+}
